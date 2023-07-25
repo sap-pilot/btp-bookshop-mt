@@ -18,7 +18,9 @@
     "@sap/cds-dk": "^7"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "undeploy": "cf undeploy btpshopmt --delete-services --delete-service-keys",
+    "bd": "mbt build -p=cf --mtar=btpshopmt.mtar && cf deploy mta_archives/btpshopmt.mtar -f"
   },
   "cds": {
     "profile": "with-mtx-sidecar",

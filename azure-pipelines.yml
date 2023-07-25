@@ -1,0 +1,67 @@
+resources:
+  repositories:
+  - repository: pf
+    type: git
+    name: CVX-DevOps/ADOPipeline
+    ref: refs/tags/latest-stable
+
+################################################
+# DO NOT MODIFY THE FOLLOWING PARAMETERS
+################################################
+parameters:
+- name: forceUpdate
+  displayName: Update Pipeline
+  type: boolean
+  default: false
+- name: deployEnvironment
+  displayName: Environment
+  type: string
+  default: dev
+  values:
+    - dev
+    - stage
+    - stage2
+################################################
+
+trigger:
+- dev
+
+lockBehavior: sequential
+stages:
+- template: pipeline.yml@pf
+  parameters:
+    ${{ insert }}: ${{ parameters }} # DO NOT MODIFY
+    pipeline: MTA
+    serviceId: 5049970
+
+    projects:
+    - name: fiori
+      type: fiori.tms
+      checkout:
+      - project: 'ITC-ITSD-LEAP'
+        repo: 'MTA_Test_Config'
+        skipDeploy: true
+      # isBuildActive: false
+      # isDeployActive: false
+      isSASTScanActive: true
+      isBuildTestActive: true
+      securityCheckPath: ''
+
+      scanTools:
+        - name: lint
+          type: fiori
+
+      sonarqube:
+        sqExclusions: ''
+        additionalProperties: ''
+      continueOnError: false
+
+      buildTests:
+      - name: 'Karma_Unit_Tests'
+        type: karma
+        karmaFile: karma.conf.js
+        frontendPath: # Must enter name of the UI subfolder
+        
+      # - name: 'Node_CDS_Unit_Tests'
+      #   type: node
+      #   nodeVersion: '14'

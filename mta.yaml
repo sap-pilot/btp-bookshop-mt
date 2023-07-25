@@ -42,8 +42,9 @@ modules:
       keep-existing-routes: true
       disk-quota: 256M
       memory: 256M
+      host: btpshopmt-dev
     properties:
-      TENANT_HOST_PATTERN: "^(.*)-${default-uri}"
+      TENANT_HOST_PATTERN: "^(.*)-btpshopmt-dev.${default-domain}"
     requires:
       - name: srv-api
         group: destinations
@@ -95,7 +96,7 @@ resources:
       service-plan: application
       path: ./xs-security.json
       config:
-        xsappname: btpshopmt-${org}-${space}
+        xsappname: btpshopmt-${space}
         tenant-mode: shared
   - name: btpshopmt-registry
     type: org.cloudfoundry.managed-service
@@ -105,10 +106,10 @@ resources:
       service: saas-registry
       service-plan: application
       config:
-        xsappname: btpshopmt-${org}-${space}
-        appName: btpshopmt-${org}-${space}
+        xsappname: btpshopmt-${space}
+        appName: btpshopmt-${space}
         displayName: btpshopmt
-        description: BTP multi-tenant sample bookshop
+        description: BTP multi-tenant sample bookshop (${space})
         category: 'BTP Sample'
         appUrls:
           getDependencies: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/dependencies

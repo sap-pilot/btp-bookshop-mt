@@ -7,6 +7,7 @@
   "private": true,
   "dependencies": {
     "@sap/cds": "^7",
+    "@sap/cds-mtxs": "^1.9",
     "express": "^4"
   },
   "devDependencies": {
@@ -14,5 +15,11 @@
   },
   "scripts": {
     "start": "cds-serve"
+  },
+  "cds": {
+    "profile": "with-mtx-sidecar",
+    "requires": {
+      "multitenancy": true
+    }
   }
 }

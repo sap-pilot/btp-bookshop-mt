@@ -8,7 +8,9 @@
   "dependencies": {
     "@sap/cds": "^7",
     "@sap/cds-mtxs": "^1.9",
-    "express": "^4"
+    "express": "^4",
+    "@sap/xssec": "^3",
+    "passport": "^0"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^1"
@@ -19,7 +21,10 @@
   "cds": {
     "profile": "with-mtx-sidecar",
     "requires": {
-      "multitenancy": true
+      "multitenancy": true,
+      "[production]": {
+        "auth": "xsuaa"
+      }
     }
   }
 }

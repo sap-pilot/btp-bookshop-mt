@@ -1,5 +1,5 @@
 {
-  "name": "bookshop-mtx",
+  "name": "btpshopmt-mtx",
   "dependencies": {
     "@sap/cds": "^7",
     "@sap/cds-hana": "^2",

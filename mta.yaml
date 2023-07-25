@@ -1,7 +1,7 @@
 _schema-version: '3.1'
-ID: bookshop
+ID: btpshopmt
 version: 1.0.0
-description: "A simple CAP project."
+description: "BTP multi-tenant sample bookshop"
 parameters:
   enable-parallel-deployments: true
 build-parameters:
@@ -10,7 +10,7 @@ build-parameters:
       commands:
         - npx cds build --production
 modules:
-  - name: bookshop-srv
+  - name: btpshopmt-srv
     type: nodejs
     path: gen/srv
     parameters:
@@ -22,10 +22,10 @@ modules:
         properties:
           srv-url: ${default-url}
     requires:
-      - name: bookshop-auth
-      - name: bookshop-db
+      - name: btpshopmt-auth
+      - name: btpshopmt-db
 
-  - name: bookshop
+  - name: btpshopmt
     type: approuter.nodejs
     path: app/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
     parameters:
@@ -46,23 +46,23 @@ modules:
         properties:
           name: mtx-api # must be used in xs-app.json as well
           url: ~{mtx-url}
-      - name: bookshop-auth
+      - name: btpshopmt-auth
     provides:
       - name: app-api
         properties:
           app-protocol: ${protocol}
           app-uri: ${default-uri}
 
-  - name: bookshop-mtx
+  - name: btpshopmt-mtx
     type: nodejs
     path: gen/mtx/sidecar
     requires:
       - name: app-api
         properties:
           SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-uri}
-      - name: bookshop-auth
-      - name: bookshop-registry
-      - name: bookshop-db
+      - name: btpshopmt-auth
+      - name: btpshopmt-registry
+      - name: btpshopmt-db
     build-parameters:
       builder: npm-ci
     parameters:
@@ -74,16 +74,16 @@ modules:
           mtx-url: ${default-url}
 
 resources:
-  - name: bookshop-auth
+  - name: btpshopmt-auth
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
       service-plan: application
       path: ./xs-security.json
       config:
-        xsappname: bookshop-${org}-${space}
+        xsappname: btpshopmt-${org}-${space}
         tenant-mode: shared
-  - name: bookshop-registry
+  - name: btpshopmt-registry
     type: org.cloudfoundry.managed-service
     requires:
       - name: mtx-api
@@ -91,11 +91,11 @@ resources:
       service: saas-registry
       service-plan: application
       config:
-        xsappname: bookshop-${org}-${space}
-        appName: bookshop-${org}-${space}
-        displayName: bookshop
-        description: A simple CAP project.
-        category: 'Category'
+        xsappname: btpshopmt-${org}-${space}
+        appName: btpshopmt-${org}-${space}
+        displayName: btpshopmt
+        description: BTP multi-tenant sample bookshop
+        category: 'BTP Sample'
         appUrls:
           getDependencies: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/dependencies
           onSubscription: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/tenant/{tenantId}
@@ -103,7 +103,7 @@ resources:
           onUnSubscriptionAsync: true
           onUpdateDependenciesAsync: true
           callbackTimeoutMillis: 300000 # Increase if your deployments are taking longer than that
-  - name: bookshop-db
+  - name: btpshopmt-db
     type: org.cloudfoundry.managed-service
     parameters:
       service: service-manager

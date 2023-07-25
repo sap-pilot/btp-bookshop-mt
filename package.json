@@ -1,7 +1,7 @@
 {
-  "name": "bookshop",
+  "name": "btpshopmt",
   "version": "1.0.0",
-  "description": "A simple CAP project.",
+  "description": "BTP multi-tenant sample bookshop",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
   "private": true,

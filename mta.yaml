@@ -42,9 +42,9 @@ modules:
       keep-existing-routes: true
       disk-quota: 256M
       memory: 256M
-      host: btpshopmt-dev
+      host: btpshopmt-${space}
     properties:
-      TENANT_HOST_PATTERN: "^(.*)-btpshopmt-dev.${default-domain}"
+      TENANT_HOST_PATTERN: "/^(.*)-btpshopmt-${space}.${default-domain}/i"
     requires:
       - name: srv-api
         group: destinations
@@ -76,7 +76,8 @@ modules:
     requires:
       - name: app-api
         properties:
-          SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-uri}
+#          SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-uri}
+            SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-btpshopmt-${space}.${default-domain}
       - name: btpshopmt-auth
       - name: btpshopmt-registry
       - name: btpshopmt-db

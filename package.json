@@ -8,8 +8,9 @@
   "dependencies": {
     "@sap/cds": "^7",
     "@sap/cds-mtxs": "^1.9",
-    "express": "^4",
+    "@sap/hana-client": "^2.17.22",
     "@sap/xssec": "^3",
+    "express": "^4",
     "passport": "^0"
   },
   "devDependencies": {

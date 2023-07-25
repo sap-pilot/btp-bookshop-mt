@@ -1,0 +1,125 @@
+_schema-version: '3.1'
+ID: btpshopmt
+version: 1.0.0
+description: "BTP multi-tenant sample bookshop"
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx cds build --production
+modules:
+  - name: btpshopmt-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: btpshopmt-auth
+      - name: btpshopmt-db
+
+  - name: btpshopmt-app
+    type: approuter.nodejs
+    path: app/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
+    build-parameters:
+      builder: npm-ci
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
+    parameters:
+      keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
+      host: btpshopmt-dev
+    properties:
+      TENANT_HOST_PATTERN: "^(.*)-btpshopmt-dev.${default-domain}"
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: mtx-api
+        group: destinations
+        properties:
+          name: mtx-api # must be used in xs-app.json as well
+          url: ~{mtx-url}
+      - name: btpshopmt-auth
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
+
+  - name: btpshopmt-mtx
+    type: nodejs
+    path: gen/mtx/sidecar
+    build-parameters:
+      builder: npm-ci
+      ignore:
+        - default-*.json
+        - .env
+        - "*node_modules*"
+    requires:
+      - name: app-api
+        properties:
+          SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-uri}
+      - name: btpshopmt-auth
+      - name: btpshopmt-registry
+      - name: btpshopmt-db
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+    provides:
+      - name: mtx-api
+        properties:
+          mtx-url: ${default-url}
+
+resources:
+  - name: btpshopmt-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: btpshopmt-${space}
+        tenant-mode: shared
+  - name: btpshopmt-registry
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: mtx-api
+    parameters:
+      service: saas-registry
+      service-plan: application
+      config:
+        xsappname: btpshopmt-${space}
+        appName: btpshopmt-${space}
+        displayName: btpshopmt
+        description: BTP multi-tenant sample bookshop (${space})
+        category: 'BTP Sample'
+        appUrls:
+          getDependencies: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/dependencies
+          onSubscription: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/tenant/{tenantId}
+          onSubscriptionAsync: true
+          onUnSubscriptionAsync: true
+          onUpdateDependenciesAsync: true
+          callbackTimeoutMillis: 300000 # Increase if your deployments are taking longer than that
+  - name: btpshopmt-db
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: service-manager
+      service-plan: container

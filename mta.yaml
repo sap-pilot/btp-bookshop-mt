@@ -42,9 +42,9 @@ modules:
       keep-existing-routes: true
       disk-quota: 256M
       memory: 256M
-      host: btpshopmt-${space}
+      host: btpshopmt-${space} # irregular host name like underscore (_) will be converted to dash (-) after approuter gets deployed
     properties:
-      TENANT_HOST_PATTERN: "/^(.*)-btpshopmt-${space}.${default-domain}/i"
+      TENANT_HOST_PATTERN: "^(.*)-btpshopmt-(.*).${default-domain}" # TENANT will be determined only by first regx group, left second group as wildcard since space name could be different than actual host name
     requires:
       - name: srv-api
         group: destinations
@@ -62,7 +62,7 @@ modules:
       - name: app-api
         properties:
           app-protocol: ${protocol}
-          app-uri: ${default-uri}
+          app-host: ${host} # unlike default-uri or default-host which was pre-calculated with illegal character (space, underscore etc), ${host} holds the actual hostname after deployment (underscore converted to dash)
 
   - name: btpshopmt-mtx
     type: nodejs
@@ -76,8 +76,7 @@ modules:
     requires:
       - name: app-api
         properties:
-#          SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-uri}
-            SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-btpshopmt-${space}.${default-domain}
+          SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-host}.${default-domain} # TODO: create route in provider space (maually create route for now)
       - name: btpshopmt-auth
       - name: btpshopmt-registry
       - name: btpshopmt-db

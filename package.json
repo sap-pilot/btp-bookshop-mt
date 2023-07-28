@@ -6,6 +6,8 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@sap-cloud-sdk/connectivity": "^3.3.0",
+    "@sap-cloud-sdk/http-client": "^3.3.0",
     "@sap/cds": "^7",
     "@sap/cds-mtxs": "^1.9",
     "@sap/hana-client": "^2.17.22",
@@ -28,6 +30,12 @@
       "multitenancy": true,
       "[production]": {
         "auth": "xsuaa"
+      },
+      "BTP_ADS": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "BTP_ADS"
+        }
       }
     }
   }

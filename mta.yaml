@@ -28,6 +28,9 @@ modules:
     requires:
       - name: btpshopmt-auth
       - name: btpshopmt-db
+      - name: btpshopmt-conn
+      - name: btpshopmt-dest
+      
 
   - name: btpshopmt-app
     type: approuter.nodejs
@@ -123,3 +126,26 @@ resources:
     parameters:
       service: service-manager
       service-plan: container
+  - name: btpshopmt-dest
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: false
+        init_data:
+          instance:
+            destinations:
+            - Authentication: NoAuthentication
+              Name: ui5
+              ProxyType: Internet
+              Type: HTTP
+              URL: https://ui5.sap.com
+            existing_destinations_policy: ignore
+        version: 1.0.0
+      service: destination
+      service-name: btpshopmt-dest
+      service-plan: lite
+  - name: btpshopmt-conn
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite

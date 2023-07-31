@@ -1,5 +1,5 @@
 _schema-version: '3.1'
-ID: btpshopmt
+ID: BTP-Bookshop-MT
 version: 1.0.0
 description: "BTP multi-tenant sample bookshop"
 parameters:
@@ -10,7 +10,7 @@ build-parameters:
       commands:
         - npx cds build --production
 modules:
-  - name: btpshopmt-srv
+  - name: BTP-Bookshop-MT-srv
     type: nodejs
     path: gen/srv
     parameters:
@@ -26,13 +26,13 @@ modules:
         properties:
           srv-url: ${default-url}
     requires:
-      - name: btpshopmt-auth
-      - name: btpshopmt-db
-      - name: btpshopmt-conn
-      - name: btpshopmt-dest
+      - name: BTP-Bookshop-MT-xsuaa
+      - name: BTP-Bookshop-MT-db
+      - name: BTP-Bookshop-MT-conn
+      - name: BTP-Bookshop-MT-dest
       
 
-  - name: btpshopmt-app
+  - name: BTP-Bookshop-MT-app
     type: approuter.nodejs
     path: app/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
     build-parameters:
@@ -45,9 +45,9 @@ modules:
       keep-existing-routes: true
       disk-quota: 256M
       memory: 256M
-      host: btpshopmt-${space} # irregular host name like underscore (_) will be converted to dash (-) after approuter gets deployed
+      host: bshop-${space} # irregular host name like underscore (_) will be converted to dash (-) after approuter gets deployed
     properties:
-      TENANT_HOST_PATTERN: "^(.*)-btpshopmt-(.*).${default-domain}" # TENANT will be determined only by first regx group, left second group as wildcard since space name could be different than actual host name
+      TENANT_HOST_PATTERN: "^(.*)-bshop-(.*).${default-domain}" # TENANT will be determined only by first regx group, left second group as wildcard since space name could be different than actual host name
     requires:
       - name: srv-api
         group: destinations
@@ -60,14 +60,14 @@ modules:
         properties:
           name: mtx-api # must be used in xs-app.json as well
           url: ~{mtx-url}
-      - name: btpshopmt-auth
+      - name: BTP-Bookshop-MT-xsuaa
     provides:
       - name: app-api
         properties:
           app-protocol: ${protocol}
           app-host: ${host} # unlike default-uri or default-host which was pre-calculated with illegal character (space, underscore etc), ${host} holds the actual hostname after deployment (underscore converted to dash)
 
-  - name: btpshopmt-mtx
+  - name: BTP-Bookshop-MT-mtx
     type: nodejs
     path: gen/mtx/sidecar
     build-parameters:
@@ -80,9 +80,9 @@ modules:
       - name: app-api
         properties:
           SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-host}.${default-domain} # TODO: create route in provider space (maually create route for now)
-      - name: btpshopmt-auth
-      - name: btpshopmt-registry
-      - name: btpshopmt-db
+      - name: BTP-Bookshop-MT-xsuaa
+      - name: BTP-Bookshop-MT-registry
+      - name: BTP-Bookshop-MT-db
     parameters:
       memory: 256M
       disk-quota: 512M
@@ -92,16 +92,16 @@ modules:
           mtx-url: ${default-url}
 
 resources:
-  - name: btpshopmt-auth
+  - name: BTP-Bookshop-MT-xsuaa
     type: org.cloudfoundry.managed-service
     parameters:
       service: xsuaa
       service-plan: application
       path: ./xs-security.json
       config:
-        xsappname: btpshopmt-${space}
+        xsappname: BTP-Bookshop-MT-${space}
         tenant-mode: shared
-  - name: btpshopmt-registry
+  - name: BTP-Bookshop-MT-registry
     type: org.cloudfoundry.managed-service
     requires:
       - name: mtx-api
@@ -109,9 +109,9 @@ resources:
       service: saas-registry
       service-plan: application
       config:
-        xsappname: btpshopmt-${space}
-        appName: btpshopmt-${space}
-        displayName: btpshopmt
+        xsappname: BTP-Bookshop-MT-${space}
+        appName: BTP-Bookshop-MT-${space}
+        displayName: BTP-Bookshop-MT
         description: BTP multi-tenant sample bookshop (${space})
         category: 'BTP Sample'
         appUrls:
@@ -121,12 +121,12 @@ resources:
           onUnSubscriptionAsync: true
           onUpdateDependenciesAsync: true
           callbackTimeoutMillis: 300000 # Increase if your deployments are taking longer than that
-  - name: btpshopmt-db
+  - name: BTP-Bookshop-MT-db
     type: org.cloudfoundry.managed-service
     parameters:
       service: service-manager
       service-plan: container
-  - name: btpshopmt-dest
+  - name: BTP-Bookshop-MT-dest
     type: org.cloudfoundry.managed-service
     parameters:
       config:
@@ -142,9 +142,9 @@ resources:
             existing_destinations_policy: ignore
         version: 1.0.0
       service: destination
-      service-name: btpshopmt-dest
+      service-name: BTP-Bookshop-MT-dest
       service-plan: lite
-  - name: btpshopmt-conn
+  - name: BTP-Bookshop-MT-conn
     type: org.cloudfoundry.managed-service
     parameters:
       service: connectivity

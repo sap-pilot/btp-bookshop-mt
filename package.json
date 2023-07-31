@@ -1,5 +1,5 @@
 {
-  "name": "btpshopmt",
+  "name": "BTP-Bookshop-MT",
   "version": "1.0.0",
   "description": "BTP multi-tenant sample bookshop",
   "repository": "<Add your repository here>",
@@ -21,8 +21,8 @@
   },
   "scripts": {
     "start": "cds-serve",
-    "undeploy": "cf undeploy btpshopmt --delete-services --delete-service-keys",
-    "bd": "mbt build -p=cf --mtar=btpshopmt.mtar && cf deploy mta_archives/btpshopmt.mtar -f"
+    "undeploy": "cf undeploy BTP-Bookshop-MT --delete-services --delete-service-keys",
+    "bd": "mbt build -p=cf --mtar=BTP-Bookshop-MT.mtar && cf deploy mta_archives/BTP-Bookshop-MT.mtar -f"
   },
   "cds": {
     "profile": "with-mtx-sidecar",

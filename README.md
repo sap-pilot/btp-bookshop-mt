@@ -17,7 +17,7 @@ File or Folder | Purpose
 
 1. Login to your CF space: `cf login`
 1. Build and deploy this project: `npm run bd`
-1. Open your consumer sub-account cockpit, goto Market Place and subscribe 'btpshopmt' app
+1. Open your consumer sub-account cockpit, goto Market Place and subscribe 'BTP-Bookshop-MT' app
 1. In your consumer sub-account, goto Services, select btpshopmt then 'Open Application' 
 1. Note the route to the application might be not available yet, in this case:
    - Open your provider sub-account cockpit then enter space, add the missing route then bind it to btpshopmt-app

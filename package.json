@@ -1,11 +1,13 @@
 {
-  "name": "btpshopmt",
+  "name": "BTP-Bookshop-MT",
   "version": "1.0.0",
   "description": "BTP multi-tenant sample bookshop",
   "repository": "<Add your repository here>",
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@sap-cloud-sdk/connectivity": "^3.3.0",
+    "@sap-cloud-sdk/http-client": "^3.3.0",
     "@sap/cds": "^7",
     "@sap/cds-mtxs": "^1.9",
     "@sap/hana-client": "^2.17.22",
@@ -19,8 +21,8 @@
   },
   "scripts": {
     "start": "cds-serve",
-    "undeploy": "cf undeploy btpshopmt --delete-services --delete-service-keys",
-    "bd": "mbt build -p=cf --mtar=btpshopmt.mtar && cf deploy mta_archives/btpshopmt.mtar -f"
+    "undeploy": "cf undeploy BTP-Bookshop-MT --delete-services --delete-service-keys",
+    "bd": "mbt build -p=cf --mtar=BTP-Bookshop-MT.mtar && cf deploy mta_archives/BTP-Bookshop-MT.mtar -f"
   },
   "cds": {
     "profile": "with-mtx-sidecar",
@@ -28,6 +30,12 @@
       "multitenancy": true,
       "[production]": {
         "auth": "xsuaa"
+      },
+      "BTP_ADS": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "BTP_ADS"
+        }
       }
     }
   }

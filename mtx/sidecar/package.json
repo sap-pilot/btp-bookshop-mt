@@ -1,9 +1,10 @@
 {
-  "name": "btpshopmt-mtx",
+  "name": "BTP-Bookshop-MT-mtx",
   "dependencies": {
     "@sap/cds": "^7",
     "@sap/cds-hana": "^2",
     "@sap/cds-mtxs": "^1.9",
+    "@sap/xsenv": "^3.4.0",
     "@sap/xssec": "^3",
     "express": "^4",
     "passport": ">=0.6.0"

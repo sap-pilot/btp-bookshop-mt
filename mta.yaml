@@ -83,6 +83,8 @@ modules:
       - name: BTP-Bookshop-MT-xsuaa
       - name: BTP-Bookshop-MT-registry
       - name: BTP-Bookshop-MT-db
+      - name: BTP-Bookshop-MT-conn
+      - name: BTP-Bookshop-MT-dest
     parameters:
       memory: 256M
       disk-quota: 512M

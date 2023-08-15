@@ -15,6 +15,7 @@ modules:
     path: gen/srv
     parameters:
       buildpack: nodejs_buildpack
+      enable-ssh: true
     build-parameters:
       builder: npm-ci
       ignore:
@@ -45,6 +46,7 @@ modules:
       keep-existing-routes: true
       disk-quota: 256M
       memory: 256M
+      enable-ssh: true
       host: bshop-${space} # irregular host name like underscore (_) will be converted to dash (-) after approuter gets deployed
     properties:
       TENANT_HOST_PATTERN: "^(.*)-bshop-(.*).${default-domain}" # TENANT will be determined only by first regx group, left second group as wildcard since space name could be different than actual host name
@@ -88,6 +90,7 @@ modules:
     parameters:
       memory: 256M
       disk-quota: 512M
+      enable-ssh: true
     provides:
       - name: mtx-api
         properties:
@@ -135,13 +138,27 @@ resources:
         HTML5Runtime_enabled: false
         init_data:
           instance:
+            existing_destinations_policy: ignore
             destinations:
             - Authentication: NoAuthentication
               Name: ui5
               ProxyType: Internet
               Type: HTTP
               URL: https://ui5.sap.com
+          subaccount:
             existing_destinations_policy: ignore
+            destinations:
+            - Name: BTP_CFAPI
+              Description: Shared CF API destination for creating route (for all MTE solutions)
+              URL: ${controller-url}
+              Type: HTTP
+              ProxyType: Internet
+              Authentication: OAuth2Password
+              tokenServiceURL: ${authorization-url}/oauth/token
+              clientId: cf
+              clientSecret:
+              User: <SetValueInCockpit>
+              Password: <SetValueInCockpit>
         version: 1.0.0
       service: destination
       service-name: BTP-Bookshop-MT-dest

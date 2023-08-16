@@ -21,6 +21,7 @@
   },
   "scripts": {
     "start": "cds-serve",
+    "start:debug": "npx --node-options=\"--inspect\" cds-serve",
     "undeploy": "cf undeploy BTP-Bookshop-MT --delete-services --delete-service-keys",
     "bd": "mbt build -p=cf --mtar=BTP-Bookshop-MT.mtar && cf deploy mta_archives/BTP-Bookshop-MT.mtar -f"
   },

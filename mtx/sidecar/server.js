@@ -36,6 +36,10 @@ cds.on('served', async () => {
     deployment.before('subscribe', async (req) => {
         // HDI container credentials are not yet available here
         const { tenant, metadata } = req.data;
+        if (!metadata) {
+            console.log("No metedata found from request, abort subscription...");
+            return '';
+        }
         let tenantHost = metadata.subscribedSubdomain + URL_POSTFIX;
         let tenantURL = 'https:\/\/' + tenantHost + /\.(.*)/gm.exec(appEnv.app.application_uris[0])[0];
         console.log("Subscribing tenant["+tenant+"], host=["+tenantHost+"], url="+tenantURL);
@@ -56,6 +60,10 @@ cds.on('served', async () => {
     deployment.after('unsubscribe', async (result, req) => {
         const { container } = req.data.options;
         const { tenant, metadata } = req.data;
+        if (!metadata) {
+            console.log("No metedata found from request, abort unsubscription...");
+            return '';
+        }
         let tenantHost = metadata.subscribedSubdomain + URL_POSTFIX;
         console.log("Unsubscribing tenant["+tenant+"], host=["+tenantHost+"]");
         deleteRoute(tenantHost, APP_NAME).then(

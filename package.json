@@ -23,6 +23,7 @@
     "start": "cds-serve",
     "start:debug": "npx --node-options=\"--inspect\" cds-serve",
     "undeploy": "cf undeploy BTP-Bookshop-MT --delete-services --delete-service-keys",
+    "build": "mbt build -p=cf --mtar=BTP-Bookshop-MT.mtar",
     "bd": "mbt build -p=cf --mtar=BTP-Bookshop-MT.mtar && cf deploy mta_archives/BTP-Bookshop-MT.mtar -f"
   },
   "cds": {
@@ -36,6 +37,12 @@
         "kind": "rest",
         "credentials": {
           "destination": "BTP_ADS"
+        }
+      },
+      "BTP_ATM": {
+        "kind": "rest",
+        "credentials": {
+            "destination": "BTP_ATM"
         }
       }
     }

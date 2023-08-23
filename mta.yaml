@@ -96,6 +96,29 @@ modules:
         properties:
           mtx-url: ${default-url}
 
+  - name: BTP-Bookshop-MT-dest-content
+    type: com.sap.application.content
+    requires:
+    - name: BTP-Bookshop-MT-dest
+      parameters:
+        content-target: true
+    - name: BTP-Bookshop-MT-atm
+      parameters:
+        service-key:
+          name: BTP-Bookshop-MT-atm-key
+    parameters:
+      content:
+        instance:
+          destinations:
+          - Name: BTP_ATM
+            Authentication: OAuth2ClientCredentials
+            ServiceInstanceName: BTP-Bookshop-MT-atm
+            ServiceKeyName: BTP-Bookshop-MT-atm-key
+            sap.cloud.service: btp.bookshop
+          existing_destinations_policy: update
+    build-parameters:
+      no-source: true
+      
 resources:
   - name: BTP-Bookshop-MT-xsuaa
     type: org.cloudfoundry.managed-service
@@ -105,6 +128,13 @@ resources:
       path: ./xs-security.json
       config:
         xsappname: BTP-Bookshop-MT-${space}
+        tenant-mode: shared
+  - name: BTP-Bookshop-MT-atm
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: apiaccess
+      config:
         tenant-mode: shared
   - name: BTP-Bookshop-MT-registry
     type: org.cloudfoundry.managed-service
@@ -134,17 +164,12 @@ resources:
   - name: BTP-Bookshop-MT-dest
     type: org.cloudfoundry.managed-service
     parameters:
+      service: destination
+      service-name: BTP-Bookshop-MT-dest
+      service-plan: lite
       config:
         HTML5Runtime_enabled: false
         init_data:
-          instance:
-            existing_destinations_policy: ignore
-            destinations:
-            - Authentication: NoAuthentication
-              Name: ui5
-              ProxyType: Internet
-              Type: HTTP
-              URL: https://ui5.sap.com
           subaccount:
             existing_destinations_policy: ignore
             destinations:
@@ -160,9 +185,6 @@ resources:
               User: <SetValueInCockpit>
               Password: <SetValueInCockpit>
         version: 1.0.0
-      service: destination
-      service-name: BTP-Bookshop-MT-dest
-      service-plan: lite
   - name: BTP-Bookshop-MT-conn
     type: org.cloudfoundry.managed-service
     parameters:

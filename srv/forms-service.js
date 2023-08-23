@@ -4,6 +4,7 @@ class FormsService extends cds.ApplicationService {
     
     async init() {
         const fs = await cds.connect.to('BTP_ADS');
+        const atm = await cds.connect.to('BTP_ATM');
 
         this.on('READ', 'Forms', async req => {
             // Call Forms Service   
@@ -42,6 +43,26 @@ class FormsService extends cds.ApplicationService {
                 return req.error(400, 'Bad Request');
             }
 
+        });
+
+        this.on('READ', 'Users', async req => {
+            // Call Forms Service   
+            const result = await atm.tx(req).get('/Users');
+            if (result && result.resources) {
+                let users = result.resources.map(cfUser => {
+                    var user = {};
+                    user.id = cfUser.id;
+                    user.externalId = cfUser.externalId;
+                    user.userName = cfUser.userName;
+                    user.email = cfUser.emails && cfUser.emails.length > 0? cfUser.emails[0].value : null;
+                    user.name = cfUser.name? cfUser.name.givenName + " " + cfUser.name.familyName : null;
+                    user.lastLogonTime = cfUser.lastLogonTime;
+                    return user;
+                });
+                return users;
+            } else {
+                return req.error(400, 'Invalid Request');
+            }
         });
     }
 }

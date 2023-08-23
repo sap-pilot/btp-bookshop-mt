@@ -31,8 +31,8 @@ modules:
       - name: BTP-Bookshop-MT-db
       - name: BTP-Bookshop-MT-conn
       - name: BTP-Bookshop-MT-dest
+      - name: BTP-Bookshop-MT-atm
       
-
   - name: BTP-Bookshop-MT-app
     type: approuter.nodejs
     path: app/ # from cds.env.folders. Consider also cds.env.build.target -> gen/app
@@ -87,6 +87,7 @@ modules:
       - name: BTP-Bookshop-MT-db
       - name: BTP-Bookshop-MT-conn
       - name: BTP-Bookshop-MT-dest
+      - name: BTP-Bookshop-MT-atm
     parameters:
       memory: 256M
       disk-quota: 512M

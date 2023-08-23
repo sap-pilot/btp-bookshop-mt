@@ -13,11 +13,16 @@ const URL_POSTFIX = "-"+URL_APP_NAME + "-" + appEnv.app.space_name.toLowerCase()
 const xsenv = require('@sap/xsenv');
 xsenv.loadEnv();
 const services = xsenv.getServices({
-    registry: { tagG: 'SaaS' },
+    registry: { tag: 'SaaS' },
     dest: { tag: 'destination' },
-    conn: { tag: "connectivity" }
+    conn: { tag: "connectivity" },
+    // atm: { name: "BTP-Bookshop-MT-atm" }
 });
-const dependencies = [{ 'xsappname': services.dest.xsappname }, { 'xsappname': services.conn.xsappname }];
+const dependencies = [
+    { 'xsappname': services.dest.xsappname }, 
+    { 'xsappname': services.conn.xsappname }, 
+    //{ 'xsappname': services.atm.xsappname }
+];
 
 cds.on('served', async () => {
 
@@ -29,7 +34,7 @@ cds.on('served', async () => {
         provisioning.on('dependencies', async (req, next) => {
             console.log("mtx dependencies: " + dependencies);
             return dependencies;
-        })
+        });
     });
 
     // create route upon subscribing this service
